@@ -1,0 +1,31 @@
+---
+import ProductCard from "../components/ProductCard.astro";
+
+// Fetch products
+const response = await fetch(`${import.meta.env.NEXT_PUBLIC_BASE_URL}/api/products`);
+const products = await response.json();
+
+type Product = {
+  product_id: number;
+  name: string;
+  description: string;
+  price: number;
+  is_recurring: boolean;
+};
+
+// // Note: In Astro, client-side interactions are typically handled differently
+// // You might want to create a separate client-side script for checkout
+// const checkoutProduct = async (productId: number) => {
+//   const response = await fetch(`${import.meta.env.NEXT_PUBLIC_BASE_URL}/api/checkout?productId=${productId}`);
+//   const data = await response.json();
+// };
+---
+
+<div>
+  <h1 class="text-3xl font-semibold mb-6">Dodo Payments Product List</h1>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {products.map((product: Product) => (
+      <ProductCard product={product} />
+    ))}
+  </div>
+</div>

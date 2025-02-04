@@ -1,0 +1,57 @@
+---
+// Import any necessary types or interfaces
+interface Product {
+    product_id: number;
+    name: string;
+    description: string;
+    price: number;
+    is_recurring: boolean;
+}
+
+// Define props
+interface Props {
+    product: Product;
+}
+
+const { product } = Astro.props;
+---
+
+<div
+    class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:transform hover:scale-105 hover:shadow-xl transition-all duration-300">
+    <h2 class="text-xl font-bold text-black">{product.name}</h2>
+    <p class="text-gray-700 mt-2">{product.description}</p>
+    <p class="text-green-600 font-semibold mt-4">${(product.price / 100).toFixed(2)}</p>
+    <button
+        class="text-xl font-bold text-black button-buy"
+        data-product-id={product.product_id}
+        data-product-isRecurring={product.is_recurring}>
+        {'Buy now'}
+    </button>
+</div>
+
+<script>
+    const buttons = document.querySelectorAll('.button-buy');
+
+    // Handle clicks on each button.
+    buttons.forEach((button) => {
+        button.addEventListener('click', async () => {
+            const productId = button.getAttribute('data-product-id') as string;
+            const isRecurring = button.getAttribute('data-product-isRecurring');
+            let productType = 'subscription';
+            if (isRecurring === 'false') {
+                productType = 'onetime';
+            }
+            try {
+                const response = await fetch(`/api/checkout/${productType}/?productId=${productId}`, {
+                    method: 'GET',
+                });
+
+                const data = await response.json();
+
+                window.location.href = data.payment_link;
+            } catch (error) {
+                console.error('Checkout error:', error);
+            }
+        });
+    });
+</script>
