@@ -92,7 +92,7 @@ Open [http://localhost:4321](http://localhost:4321) to see your pricing page!
 
 ## Project Structure
 
-```
+```text
 src/
 ├── components/
 │   ├── Footer.astro           # Reusable footer
@@ -135,7 +135,7 @@ customer: {
 
 ### Update Customer Portal Link
 
-In `src/components/Header.astro`, replace the hardcoded customer ID with the actual customer ID from your auth system ordatabase:
+In `src/components/Header.astro`, replace the hardcoded customer ID with the actual customer ID from your auth system or database:
 
 ```typescript
 const CUSTOMER_ID = "cus_001"; // Replace with actual customer ID
@@ -178,7 +178,7 @@ See [Astro's deployment guides](https://docs.astro.build/en/guides/deploy/) for 
 
 After deploying, update your webhook URL in the [Dodo Payments Dashboard](https://app.dodopayments.com/developer/webhooks):
 
-```
+```text
 https://your-domain.com/api/webhook
 ```
 
