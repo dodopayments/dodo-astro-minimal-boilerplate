@@ -1,5 +1,5 @@
 {
-  "name": "astro-dodo",
+  "name": "dodo-astro-boilerplate",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -9,12 +9,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.2.2",
-    "dodopayments": "^0.20.1",
-    "standardwebhooks": "^1.0.0"
+    "@dodopayments/astro": "^0.2.4",
+    "@tailwindcss/vite": "^4.1.17",
+    "astro": "^5.16.1"
   },
   "devDependencies": {
-    "@astrojs/tailwind": "^6.0.0",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^4.1.17"
   }
 }

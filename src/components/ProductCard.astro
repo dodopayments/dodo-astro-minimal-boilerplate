@@ -1,57 +1,129 @@
 ---
-// Import any necessary types or interfaces
-interface Product {
-    product_id: number;
-    name: string;
-    description: string;
-    price: number;
-    is_recurring: boolean;
-}
+import type { Product } from "../lib/products";
 
-// Define props
 interface Props {
-    product: Product;
+  product: Product;
 }
 
 const { product } = Astro.props;
+const priceString = (product.price / 100).toFixed(2);
 ---
 
-<div
-    class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:transform hover:scale-105 hover:shadow-xl transition-all duration-300">
-    <h2 class="text-xl font-bold text-black">{product.name}</h2>
-    <p class="text-gray-700 mt-2">{product.description}</p>
-    <p class="text-green-600 font-semibold mt-4">${(product.price / 100).toFixed(2)}</p>
+<div class="group relative overflow-hidden rounded-xl bg-black border border-neutral-800 hover:border-neutral-700 transition-colors duration-300">
+  <div class="p-8 flex flex-col h-full">
+    <!-- Product Name -->
+    <h3 class="text-xl font-bold text-white mb-2">
+      {product.name}
+    </h3>
+
+    <!-- Description -->
+    <p class="text-neutral-400 text-sm mb-8 leading-relaxed">
+      {product.description}
+    </p>
+
+    <!-- Price Section -->
+    <div class="mb-8">
+      <div class="flex items-baseline gap-1">
+        <span class="text-3xl font-bold text-white tracking-tight">
+          ${priceString}
+        </span>
+        <span class="text-neutral-500 text-sm font-medium">
+          /mo
+        </span>
+      </div>
+    </div>
+
+    <!-- Features List -->
+    <ul class="mb-8 space-y-3 grow">
+      {product.features.map((feature) => (
+        <li class="flex items-start gap-3 text-sm text-neutral-300">
+          <svg class="w-5 h-5 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <span>{feature}</span>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Checkout Button -->
     <button
-        class="text-xl font-bold text-black button-buy"
-        data-product-id={product.product_id}
-        data-product-isRecurring={product.is_recurring}>
-        {'Buy now'}
+      class="button-buy w-full py-3 px-4 rounded-lg font-medium text-black bg-white hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+      data-product-id={product.product_id}
+    >
+      <span class="button-text">Get Started</span>
+      <span class="button-loading hidden">
+        <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Processing...</span>
+      </span>
     </button>
+  </div>
 </div>
 
 <script>
-    const buttons = document.querySelectorAll('.button-buy');
+  const buttons = document.querySelectorAll('.button-buy');
 
-    // Handle clicks on each button.
-    buttons.forEach((button) => {
-        button.addEventListener('click', async () => {
-            const productId = button.getAttribute('data-product-id') as string;
-            const isRecurring = button.getAttribute('data-product-isRecurring');
-            let productType = 'subscription';
-            if (isRecurring === 'false') {
-                productType = 'onetime';
-            }
-            try {
-                const response = await fetch(`/api/checkout/${productType}/?productId=${productId}`, {
-                    method: 'GET',
-                });
+  buttons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const productId = button.getAttribute('data-product-id');
+      const buttonText = button.querySelector('.button-text');
+      const buttonLoading = button.querySelector('.button-loading');
+      
+      if (!productId) {
+        console.error('Missing product ID');
+        return;
+      }
 
-                const data = await response.json();
+      // Show loading state
+      button.setAttribute('disabled', 'true');
+      buttonText?.classList.add('hidden');
+      buttonLoading?.classList.remove('hidden');
+      buttonLoading?.classList.add('flex', 'items-center', 'gap-2');
 
-                window.location.href = data.payment_link;
-            } catch (error) {
-                console.error('Checkout error:', error);
-            }
+      try {
+        const response = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            product_cart: [
+              {
+                product_id: productId,
+                quantity: 1,
+              },
+            ],
+            // Replace with actual customer data from your auth system
+            customer: {
+              name: "John Doe",
+              email: "john@example.com",
+            },
+          }),
         });
+
+        if (!response.ok) {
+          throw new Error('Failed to initiate checkout');
+        }
+
+        const data = await response.json();
+
+        if (data.checkout_url) {
+          window.location.href = data.checkout_url;
+        } else {
+          throw new Error('No checkout URL received');
+        }
+      } catch (error) {
+        console.error('Checkout error:', error);
+        alert('Failed to initiate checkout. Please try again.');
+        
+        // Reset button state
+        button.removeAttribute('disabled');
+        buttonText?.classList.remove('hidden');
+        buttonLoading?.classList.add('hidden');
+      }
     });
+  });
 </script>
+

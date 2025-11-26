@@ -1,0 +1,23 @@
+---
+const CUSTOMER_ID = "cus_001"; // Replace with actual customer ID
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 border-b border-neutral-800 bg-black/50 backdrop-blur-md">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+        <span class="font-bold text-black text-lg">D</span>
+      </div>
+      <span class="font-bold text-white text-lg tracking-tight hidden sm:block">
+        Dodo Payments Boilerplate
+      </span>
+    </a>
+
+    <a 
+      href={`/api/customer-portal?customer_id=${CUSTOMER_ID}`}
+      class="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+    >
+      Customer Portal
+    </a>
+  </div>
+</header>
