@@ -11,7 +11,7 @@
   "dependencies": {
     "@dodopayments/astro": "^0.2.4",
     "@tailwindcss/vite": "^4.1.17",
-    "astro": "^5.16.1"
+    "astro": "^7.3.3"
   },
   "devDependencies": {
     "tailwindcss": "^4.1.17"
