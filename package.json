@@ -9,9 +9,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@dodopayments/astro": "^0.2.4",
+    "@dodopayments/astro": "^1.0.0",
     "@tailwindcss/vite": "^4.1.17",
-    "astro": "^5.16.1"
+    "astro": "^7.4.12"
   },
   "devDependencies": {
     "tailwindcss": "^4.1.17"
